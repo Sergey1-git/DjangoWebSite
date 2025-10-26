@@ -13,7 +13,7 @@
     <div class="menu">
 
                  {% for m in menu %}
-                     <div class="menu_text"><a href=# style="color:yellow" >{{m.title}}</a></div>
+                      <div class="menu_text"><a href="{% url m.url_name %}" style="color:yellow" >{{m.title}}</a></div>
                  {% endfor %}
 
     </div>

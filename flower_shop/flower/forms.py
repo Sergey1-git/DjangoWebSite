@@ -1,5 +1,5 @@
 from django import forms
-from flower_shop.flower.models import Flower
+from .models import Flower
 
 
 class AddProductForm(forms.ModelForm):
