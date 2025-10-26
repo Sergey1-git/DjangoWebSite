@@ -21,9 +21,10 @@ def add_product(request):
         if form.is_valid():
             print('Valid add_product')
             form.save()
-    else:
-        print('NO Valid add_product')
-        form = AddProductForm()
+        else:
+            print('NO Valid add_product')
+            return render(request, 'flower/product.html', {'title': 'Добавление товара', 'menu': menu, 'form': form, })
+    form = AddProductForm()
     return render(request, 'flower/product.html',{'title': 'Добавление товара','menu': menu,'form': form,})
 
 def contact(request):
