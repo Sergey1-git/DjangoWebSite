@@ -1,0 +1,71 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+  margin: 0;
+}
+#main {
+  display: flex;
+  flex: 1;
+
+}
+#main3  {
+
+  flex: 1;
+
+}
+#main1 {
+  flex: 0 0 20vw;
+  background: beige;
+  order: -1;
+}
+
+#main2 {
+  flex: 0 0 20vw;
+  background: beige;
+  }
+
+
+}
+header, footer {
+  background: yellowgreen;
+  height: 20vh;
+}
+header, footer, article, nav, aside {
+  padding: 1em;
+}
+
+.header{
+max-width: 1920px;
+height: 300px;
+background: #fff url('/media/1118252_копия.jpg')  no-repeat center;
+}
+.header_text {
+padding-top: 80px;
+padding-left: 300px;
+width: 1200px;
+font-family:  Tahoma, Arial;
+font-size: 80px;
+color: yellow
+}
+
+.menu{
+display: flex;
+
+max-width: 1920px;
+height: 50px;
+background: green;
+}
+.menu_text {
+color: yellow;
+padding-top: 10px;
+padding-left: 20px;
+font-family:  Tahoma, Arial;
+font-size: 20px;
+flex-grow:1;
+
+}
+

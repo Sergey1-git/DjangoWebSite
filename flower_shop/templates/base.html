@@ -1,0 +1,35 @@
+{% load static %}
+
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>Главная страница</title>
+<link type="text/css" href="{% static 'flower/css/styles.css' %}" rel="stylesheet" />
+</head>
+<body>
+    <div class="header">
+             <div class="header_text">  Купите цветы </div>
+    </div>
+    <div class="menu">
+
+                 {% for m in menu %}
+                     <div class="menu_text"><a href=# style="color:yellow" >{{m.title}}</a></div>
+                 {% endfor %}
+
+    </div>
+    <div id="main">
+        <div id="main1">
+            <p>Каталоги цветов.</p>
+            <ol>
+                <li><a href=#>Домашние цветы.</a></li>
+                <li><a href=#>Садовые цветы.</a></li>
+            </ol>
+        </div>
+        <div id="main3">{% block content %} {% endblock %}</div>
+        <div id="main2">Боковая панель</div>
+    </div>
+    <div class="footer">
+     <p>Все права защищены</p>
+    </div>
+</body>
+</html>
