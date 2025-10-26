@@ -41,6 +41,19 @@ def homemade_flowers(request):
     return render(request, 'flower/homemade_flowers.html',{'title': 'Домашние цветы','menu': menu,'posts': data_dbh,})
 
 
+def garden_flowers(request):
+
+    data_dbh = Flower.objects.filter(plant_type='garden')
+    if request.method == "POST":
+        dict=request.POST.dict()
+        if 'buy' in dict:
+            id=request.user.id
+            buy_flower(request,id, dict['id'], dict['buy'])
+        return render(request, 'flower/garden_flowers.html',{'title': 'Садовые цветы','menu': menu,'posts': data_dbh,})
+    return render(request, 'flower/garden_flowers.html',{'title': 'Садовые цветы','menu': menu,'posts': data_dbh,})
+
+
+
 def show_post(request, id):
 
     if request.method == "POST":
