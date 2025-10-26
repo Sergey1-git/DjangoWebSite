@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+
+{% if post.photo %}
+<p ><img  src="{{post.photo.url}}"></p>
+{% endif %}
+
+{{post.content|linebreaks}}
+<p>{{post.title }}  Цена {{post.price }}</p>
+<p>Доступно {{post.quantity}} шт.</p>
+        <form action="" method="post">{% csrf_token %}
+            <input type="hidden" name='id' value={{post.id}}>
+            <button type="submit" name="buy" value={{post.title}}>Купить</button>
+        </form>
+{% endblock %}

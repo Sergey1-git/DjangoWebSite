@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 
 from .forms import AddProductForm
 from .models import Flower
@@ -39,6 +39,29 @@ def homemade_flowers(request):
             buy_flower(request,id, dict['id'], dict['buy'])
         return render(request, 'flower/homemade_flowers.html',{'title': 'Домашние цветы','menu': menu,'posts': data_dbh,})
     return render(request, 'flower/homemade_flowers.html',{'title': 'Домашние цветы','menu': menu,'posts': data_dbh,})
+
+
+def show_post(request, id):
+
+    if request.method == "POST":
+        print("show_post request.POST",request.POST)
+        print("show_post request.POST.dict()",request.POST.dict())
+        dict = request.POST.dict()
+        if 'buy' in dict:
+            id_user = request.user.id
+            buy_flower(request, id_user, dict['id'], dict['buy'])
+    print("show_post request.GET",request.GET)
+    print("show_post request.GET.dict()",request.GET.dict())
+    print("show_post id",id)
+    post = get_object_or_404(Flower, pk=id)
+
+    data = {
+        'title': post.title,
+        'menu': menu,
+        'post': post,}
+
+    return render(request, 'flower/post.html', context=data)
+
 
 def contact(request):
     return HttpResponse("Обратная связь")

@@ -6,7 +6,7 @@
     {% for p in posts %}
     {%if p.plant_type == 'home' %}
     <div class="card">
-        <a href=#><img src="/media/{{p.photo}}" height="150" width="150"></a>
+        <a href="{% url 'show_post' p.id %}"><img src="/media/{{p.photo}}" height="150" width="150"></a>
         <p>{{p.title }}  Цена {{p.price }}</p>
         <p>Доступно {{p.quantity}} шт.</p>
         <form  action="" method="post">{% csrf_token %}
