@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% block content %}
+<p>Домашние цветы</p>
+
+<div class="cards">
+    {% for p in posts %}
+    {%if p.plant_type == 'home' %}
+    <div class="card">
+        <a href=#><img src="/media/{{p.photo}}" height="150" width="150"></a>
+        <p>{{p.title }}  Цена {{p.price }}</p>
+        <p>Доступно {{p.quantity}} шт.</p>
+        <form  action="" method="post">{% csrf_token %}
+            <input type="hidden" name='id' value={{p.id}}>
+            <button type="submit" name="buy" value={{p.title}} > Купить </button>
+        </form>
+    </div>
+    {% endif %}
+    {% endfor %}
+</div>
+
+{% endblock %}

@@ -69,3 +69,19 @@ flex-grow:1;
 
 }
 
+.cards{
+    display: flex;
+    flex-wrap:wrap;
+
+}
+
+.card{
+    display: flex;
+    flex-direction: column;
+    width: 200px;
+	height: 300px;
+	border: 2px solid red;
+	margin:20px;
+
+	align-items: center;
+}
