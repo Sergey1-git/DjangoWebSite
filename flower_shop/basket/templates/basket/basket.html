@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h1>Корзина покупок</h1>
+
+<form action="" method="post" >
+    <p>{{title}}</p>
+    {% csrf_token %}
+    {{ form.as_p }}
+</form>
+
+{% endblock %}
