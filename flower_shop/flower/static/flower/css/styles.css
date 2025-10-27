@@ -29,11 +29,14 @@ body {
   }
 
 
+
+
+.footer {
+
+  height: 5vh;
+  background-color: LightYellow;
 }
-header, footer {
-  background: yellowgreen;
-  height: 20vh;
-}
+
 header, footer, article, nav, aside {
   padding: 1em;
 }
@@ -86,4 +89,10 @@ flex-grow:1;
 	align-items: center;
 }
 
+li {
+  margin-bottom: 10px; /* Или используйте другие единицы: em, rem */
+  font-family:  Tahoma, Arial;
+  font-size: 20px;
+  list-style-type: none;
+}
 

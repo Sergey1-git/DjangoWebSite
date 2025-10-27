@@ -17,24 +17,26 @@
                  {% endfor %}
                  <div class="menu_text"><a href="{% url 'basket:basket' %}" style="color:yellow">Корзина</a></div>
                  {% if user.is_authenticated %}
-                     <div class="menu_text"> {{user.username}} | <a href="{% url 'users:logout' %}"style="color:yellow">Выйти</a></div>
+                     <div class="menu_text"> {{user.username}} | <a href="{% url 'users:logout' %}
+                                             "style="color:yellow">Выйти</a></div>
                  {% else %}
-                     <div class="menu_text"><a href="{% url 'users:login' %}" style="color:yellow">Войти</a> | <a href="{% url 'users:register' %}">Регистрация</a></div>
+                     <div class="menu_text"><a href="{% url 'users:login' %}" style="color:yellow">Войти</a> |
+                         <a href="{% url 'users:register' %} "style="color:yellow">Регистрация</a></div>
                  {% endif %}
     </div>
     <div id="main">
         <div id="main1">
-            <p>Каталоги цветов.</p>
+            <p style="color: green; font-size: 30px;">Каталоги цветов.</p>
             <ol>
-                <li><a href="{% url 'homemade_flowers' %}">Домашние цветы.</a></li>
-                <li><a href="{% url 'garden_flowers' %}">Садовые цветы.</a></li>
+                <li><a href="{% url 'homemade_flowers' %}" style="color:green">Домашние цветы.</a></li>
+                <li><a href="{% url 'garden_flowers' %}" style="color:green">Садовые цветы.</a></li>
             </ol>
         </div>
         <div id="main3">{% block content %} {% endblock %}</div>
-        <div id="main2">Боковая панель</div>
+        <div id="main2">Здесь будет дополнительный функционал</div>
     </div>
     <div class="footer">
-     <p>Все права защищены</p>
+     <p>© 2025. flower_shop.rу</p>
     </div>
 </body>
 </html>

@@ -74,7 +74,9 @@ def show_post(request, id):
 
 
 def contact(request):
-    return HttpResponse("Обратная связь")
+    date = {'title': 'Обратная связь', 'menu': menu, }
+    return render(request, 'flower/contact.html', context=date)
+
 
 
 def buy_flower(request, id_user, id_flower, name_flower):
