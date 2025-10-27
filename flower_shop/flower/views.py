@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.http import HttpResponse
 from django.shortcuts import render, get_object_or_404
 
@@ -76,4 +78,10 @@ def contact(request):
 
 
 def buy_flower(request, id_user, id_flower, name_flower):
-    pass
+    w = Flower.objects.get(pk=id_flower)
+    if w.quantity > 0:
+        w.quantity -= 1
+        #object_basket(id_user, id_flower, 1)
+        w.time_create = datetime.now()
+        w.is_published = True
+        w.save()
