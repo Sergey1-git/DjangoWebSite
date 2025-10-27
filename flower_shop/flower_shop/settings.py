@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-vay_oezw4g+kq3kdaul6nba@p3$-cc%g@w3eucj70rnhbz4)n0
 DEBUG = True
 
 ALLOWED_HOSTS = ['127.0.0.1',]
-
+INTERNAL_IPS = ['127.0.0.1',]
 
 # Application definition
 
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'flower.apps.FlowerConfig',
     'basket.apps.BasketConfig',
+    'users.apps.UsersConfig',
 ]
 
 MIDDLEWARE = [
@@ -104,7 +105,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'ru-RU' #'en-us'
 
 TIME_ZONE = 'UTC'
 
@@ -123,6 +124,8 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+LOGIN_REDIRECT_URL = 'home'
+LOGOUT_REDIRECT_URL = 'home'
 
 MEDIA_ROOT = BASE_DIR / 'media'
 MEDIA_URL = '/media/'

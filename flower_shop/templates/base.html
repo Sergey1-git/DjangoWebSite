@@ -16,7 +16,11 @@
                       <div class="menu_text"><a href="{% url m.url_name %}" style="color:yellow" >{{m.title}}</a></div>
                  {% endfor %}
                  <div class="menu_text"><a href="{% url 'basket:basket' %}" style="color:yellow">Корзина</a></div>
-
+                 {% if user.is_authenticated %}
+                     <div class="menu_text"> {{user.username}} | <a href="{% url 'users:logout' %}"style="color:yellow">Выйти</a></div>
+                 {% else %}
+                     <div class="menu_text"><a href="{% url 'users:login' %}" style="color:yellow">Войти</a> | <a href="{% url 'users:register' %}">Регистрация</a></div>
+                 {% endif %}
     </div>
     <div id="main">
         <div id="main1">
