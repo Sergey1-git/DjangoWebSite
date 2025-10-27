@@ -5,6 +5,7 @@ from django.shortcuts import render, get_object_or_404
 
 from .forms import AddProductForm
 from .models import Flower
+from ..basket.views import object_basket
 
 menu = [{'title': "Главная страница", 'url_name': 'home'},
         {'title': "Добавить товар", 'url_name': 'add_product'},
@@ -81,7 +82,7 @@ def buy_flower(request, id_user, id_flower, name_flower):
     w = Flower.objects.get(pk=id_flower)
     if w.quantity > 0:
         w.quantity -= 1
-        #object_basket(id_user, id_flower, 1)
+        object_basket(id_user, id_flower, 1)
         w.time_create = datetime.now()
         w.is_published = True
         w.save()
