@@ -1,9 +1,9 @@
 from django.shortcuts import render
-from flower_shop.basket.forms import FormBasket
-from flower_shop.flower.models import Flower
+from .forms import FormBasket
+
 from django import forms
 
-
+from flower.models import Flower
 
 dict_object_basket = {}
 dict_object_basket_form={}

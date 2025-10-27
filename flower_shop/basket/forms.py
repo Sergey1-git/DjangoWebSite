@@ -8,7 +8,5 @@ class FormBasket(forms.Form):
         # Добавление полей из словаря
         for name, field_class in dict_all.items():
             if name !='csrfmiddlewaretoken':
-                print('name',name)
-                print('field_class', field_class)
                 self.fields[name] = field_class
         self.post=None

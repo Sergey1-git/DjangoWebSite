@@ -5,7 +5,9 @@ from django.shortcuts import render, get_object_or_404
 
 from .forms import AddProductForm
 from .models import Flower
-from ..basket.views import object_basket
+
+from basket.views import object_basket
+
 
 menu = [{'title': "Главная страница", 'url_name': 'home'},
         {'title': "Добавить товар", 'url_name': 'add_product'},
