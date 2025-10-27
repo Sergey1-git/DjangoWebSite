@@ -53,7 +53,7 @@ def basket(request):
                              'form': dict_object_basket_form[user_id],'args': len(dict_object_basket[user_id].args),})
 
 
-    if len(dict_object_basket)==0:
+    if request.method == "GET" and len(dict_object_basket)==0:
         return render(request, 'basket/basket.html',{'title': 'Ваша корзина покупок пуста','args':0,})
 
 
