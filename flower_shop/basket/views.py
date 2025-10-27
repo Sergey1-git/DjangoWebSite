@@ -5,6 +5,8 @@ from django import forms
 
 from flower.models import Flower
 
+from .models import BasketModel
+
 dict_object_basket = {}
 dict_object_basket_form={}
 
@@ -51,7 +53,55 @@ def basket(request):
 
         return render(request, 'basket/basket.html',{'title': 'Корзина покупок',
                              'form': dict_object_basket_form[user_id],'args': len(dict_object_basket[user_id].args),})
+    if request.method == "POST":
+        print("POST")
+        user_id = request.user.id
+        dict_data = request.POST.dict()
+        print('dict_data',dict_data)
+        dict_order = {}
+        for key in dict_data:
+            if key not in ['id_user', 'cost', 'address', 'csrfmiddlewaretoken', 'recalculation', 'product']:
+                if dict_data[key]!=0:
+                    dict_order[key] = int(dict_data[key])
+        if dict_object_basket[user_id].args != dict_order:
+            dict_object_basket[user_id].args=dict_order
+            dict_object_basket_form[user_id] = FormBasket(preparation_form(dict_order, user_id))
 
+            return render(request, 'basket/basket.html',
+                          {'title': 'Корзина покупок', 'form': dict_object_basket_form[user_id], 'args':len(dict_object_basket[user_id].args), })
+        else:
+            dict_object_basket_form[user_id].data=request.POST
+            dict_object_basket_form[user_id].is_bound = True
+            if  dict_object_basket_form[user_id].is_valid():
+                print('Valid')
+                data = dict_object_basket_form[user_id].data
+                dict_order_final = {}
+                for key in data:
+                    if key not in ['id_user', 'cost', 'address', 'csrfmiddlewaretoken', 'recalculation', 'product']:
+                        dict_order_final[key] = int(data[key])
+                print('data', data)
+                print('data.get id_user)', data.get('id_user'))
+                w2 = BasketModel(id_users=int(data.get('id_user')), dict_order=dict_order, cost=float(data.get('cost')),
+                             address=data.get('address'))
+                w2.save()
+                for key in dict_order_final:
+                    w3 = Flower.objects.get(pk=int(key))
+                    value_before = dict_object_basket[user_id].args[key]
+                    if dict_order_final[key] == value_before:
+                        w3.quantity = w3.quantity
+                    elif dict_order_final[key] > value_before:
+                        w3.quantity -= dict_order_final[key] - value_before
+                        w3.save()
+                    else:
+                        w3.quantity += value_before - dict_order_final[key]
+                        w3.save()
+                Basket.delete_basket_and_form(user_id)
+                return render(request, 'basket/basket.html', {'title': 'Заказ успешно создан',})
+            else:
+                print('NO Valid')
+                form = dict_object_basket_form[user_id]
+                return render(request, 'basket/basket.html',{'title': 'Что то пошло не так, попробуйте'
+                                                                  ' повторить заказ ','form': form,})
 
     if request.method == "GET" and len(dict_object_basket)==0:
         return render(request, 'basket/basket.html',{'title': 'Ваша корзина покупок пуста','args':0,})

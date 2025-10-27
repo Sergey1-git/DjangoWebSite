@@ -81,9 +81,12 @@ def contact(request):
 
 
 def buy_flower(request, id_user, id_flower, name_flower):
+    print("buy_flower request.POST.dict()", request.POST.dict())
+    print('Вход buy_flower', id_user, id_flower, name_flower)
     w = Flower.objects.get(pk=id_flower)
     if w.quantity > 0:
         w.quantity -= 1
+        print('id_user buy_flower',id_user)
         object_basket(id_user, id_flower, 1)
         w.time_create = datetime.now()
         w.is_published = True

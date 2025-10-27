@@ -7,6 +7,12 @@
     <p>{{title}}</p>
     {% csrf_token %}
     {{ form.as_p }}
+    {% if args > 0 %}
+        <p>Если вносились изменения в поля колличества приобретаемого товара нажмите кнопку 'Внести изменения в заказ'</p>
+        <button type="submit" name="recalculation" >Внести изменения в заказ</button>
+        <p>Если в заказ не вносились изменения  нажмите кнопку 'Подтвердить заказ'</p>
+        <button type="submit" name="product">Подтвердить заказ</button>
+    {% endif %}
 </form>
 
 {% endblock %}
