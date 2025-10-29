@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from .forms import AddProductForm
 from .models import Flower
@@ -37,10 +37,13 @@ def homemade_flowers(request):
     if request.method == "POST":
         dict=request.POST.dict()
         if 'buy' in dict:
-            id=request.user.id
-            buy_flower(request,id, dict['id'], dict['buy'])
-        return render(request, 'flower/homemade_flowers.html',{'title': 'Домашние цветы','menu': menu,'posts': data_dbh,})
-    return render(request, 'flower/homemade_flowers.html',{'title': 'Домашние цветы','menu': menu,'posts': data_dbh,})
+            if request.user.is_authenticated is False:
+                return HttpResponseRedirect("/users/register/")
+            else:
+                id = request.user.id
+                buy_flower(request, id, dict['id'], dict['buy'])
+    return render(request, 'flower/homemade_flowers.html',
+                      {'title': 'Домашние цветы', 'menu': menu, 'posts': data_dbh, })
 
 
 def garden_flowers(request):
@@ -49,10 +52,13 @@ def garden_flowers(request):
     if request.method == "POST":
         dict=request.POST.dict()
         if 'buy' in dict:
-            id=request.user.id
-            buy_flower(request,id, dict['id'], dict['buy'])
-        return render(request, 'flower/garden_flowers.html',{'title': 'Садовые цветы','menu': menu,'posts': data_dbh,})
-    return render(request, 'flower/garden_flowers.html',{'title': 'Садовые цветы','menu': menu,'posts': data_dbh,})
+            if request.user.is_authenticated is False:
+                return HttpResponseRedirect("/users/register/")
+            else:
+                id = request.user.id
+                buy_flower(request, id, dict['id'], dict['buy'])
+    return render(request, 'flower/garden_flowers.html',
+                      {'title': 'Садовые цветы', 'menu': menu, 'posts': data_dbh, })
 
 
 
@@ -80,12 +86,9 @@ def contact(request):
 
 
 def buy_flower(request, id_user, id_flower, name_flower):
-    print("buy_flower request.POST.dict()", request.POST.dict())
-    print('Вход buy_flower', id_user, id_flower, name_flower)
     w = Flower.objects.get(pk=id_flower)
     if w.quantity > 0:
         w.quantity -= 1
-        print('id_user buy_flower',id_user)
         object_basket(id_user, id_flower, 1)
         w.time_create = datetime.now()
         w.is_published = True
