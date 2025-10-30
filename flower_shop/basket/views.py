@@ -1,11 +1,11 @@
 from django.shortcuts import render
-from .forms import FormBasket
+from  basket.forms import FormBasket
 
 from django import forms
 
-from flower.models import Flower
+from  flower.models import Flower
 
-from .models import BasketModel
+from basket.models import BasketModel
 
 dict_object_basket = {}
 dict_object_basket_form={}
@@ -46,18 +46,20 @@ def object_basket(id_user, *args):
 
 def basket(request):
 
-    if request.method == "GET" and len(dict_object_basket) > 0:
+    if request.method == "GET":
         user_id = request.user.id
-        dict_data=dict_object_basket[user_id].args
-        dict_object_basket_form[user_id]=FormBasket(preparation_form(dict_data, user_id))
-
-        return render(request, 'basket/basket.html',{'title': 'Корзина покупок',
+        if user_id in dict_object_basket:
+            dict_data = dict_object_basket[user_id].args
+            dict_object_basket_form[user_id] = FormBasket(preparation_form(dict_data, user_id))
+            return render(request, 'basket/basket.html', {'title': 'Корзина покупок',
                              'form': dict_object_basket_form[user_id],'args': len(dict_object_basket[user_id].args),})
+        else:
+            return render(request, 'basket/basket.html', {'title': 'Корзина покупок', 'args': 0,})
+
+
     if request.method == "POST":
-        print("POST")
         user_id = request.user.id
         dict_data = request.POST.dict()
-        print('dict_data',dict_data)
         dict_order = {}
         for key in dict_data:
             if key not in ['id_user', 'cost', 'address', 'csrfmiddlewaretoken', 'recalculation', 'product']:
@@ -79,8 +81,6 @@ def basket(request):
                 for key in data:
                     if key not in ['id_user', 'cost', 'address', 'csrfmiddlewaretoken', 'recalculation', 'product']:
                         dict_order_final[key] = int(data[key])
-                print('data', data)
-                print('data.get id_user)', data.get('id_user'))
                 w2 = BasketModel(id_users=int(data.get('id_user')), dict_order=dict_order, cost=float(data.get('cost')),
                              address=data.get('address'))
                 w2.save()
@@ -96,15 +96,15 @@ def basket(request):
                         w3.quantity += value_before - dict_order_final[key]
                         w3.save()
                 Basket.delete_basket_and_form(user_id)
-                return render(request, 'basket/basket.html', {'title': 'Заказ успешно создан',})
+                string = 'Заказ успешно создан'
+                return render(request, 'basket/basket.html', {'title': 'Заказ успешно создан', 'string':string, })
             else:
                 print('NO Valid')
                 form = dict_object_basket_form[user_id]
+                string = 'Что то пошло не так, попробуйте повторить заказ '
                 return render(request, 'basket/basket.html',{'title': 'Что то пошло не так, попробуйте'
-                                                                  ' повторить заказ ','form': form,})
+                                                                  ' повторить заказ ','string':string,'form': form,})
 
-    if request.method == "GET" and len(dict_object_basket)==0:
-        return render(request, 'basket/basket.html',{'title': 'Ваша корзина покупок пуста','args':0,})
 
 
 def preparation_form(dict_data, user_id):

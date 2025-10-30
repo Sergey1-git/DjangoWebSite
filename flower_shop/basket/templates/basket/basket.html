@@ -2,9 +2,8 @@
 
 {% block content %}
 <h1>Корзина покупок</h1>
-
+{{string}}
 <form action="" method="post" >
-    <p>{{title}}</p>
     {% csrf_token %}
     {{ form.as_p }}
     {% if args > 0 %}
@@ -14,5 +13,7 @@
         <button type="submit" name="product">Подтвердить заказ</button>
     {% endif %}
 </form>
-
+{% if args == 0 %}
+         <p>Ваша корзина пуста</p>
+{% endif %}
 {% endblock %}
