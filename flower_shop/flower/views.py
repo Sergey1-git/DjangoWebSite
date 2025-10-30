@@ -29,7 +29,7 @@ def add_product(request):
     return render(request, 'flower/product.html',{'title': 'Добавление товара','menu': menu,'form': form,})
 
 
-# Функция  представления каталого комнатные цветы.
+# Функция  представления каталога комнатные цветы.
 def homemade_flowers(request):
     data_dbh = Flower.objects.filter(plant_type='home')
     if request.method == "POST":
@@ -43,7 +43,7 @@ def homemade_flowers(request):
     return render(request, 'flower/homemade_flowers.html',
                       {'title': 'Домашние цветы', 'menu': menu, 'posts': data_dbh, })
 
-# Функция  представления каталого садовые цветы.
+# Функция  представления каталога садовые цветы.
 def garden_flowers(request):
     data_dbh = Flower.objects.filter(plant_type='garden')
     if request.method == "POST":
