@@ -1,21 +1,20 @@
 from django.shortcuts import render
 from  basket.forms import FormBasket
-
 from django import forms
-
 from  flower.models import Flower
-
 from basket.models import BasketModel
 
 dict_object_basket = {}
 dict_object_basket_form={}
 
+
+# Класс корзины покупателей.
 class Basket:
     def __init__(self, id):
         self.id_object=id
         self.args={}
 
-
+    # Функция добавления в  Корзины покупателя товара.
     def add_flower_basket(id, *args):
         if len(args)==2:
             if args[0] not in dict_object_basket[id].args:
@@ -23,13 +22,13 @@ class Basket:
             else:
                 dict_object_basket[id].args[args[0]]+=1
 
-
+    # Удаление корзины покупателя и формы заказа.
     def delete_basket_and_form(id):
         del dict_object_basket[id]
         del dict_object_basket_form[id]
 
 
-
+# Функция создания Корзины покупателя при певом нажатии кнопки купить.
 def object_basket(id_user, *args):
     print('вход object_basket', id_user, *args)
     flag = True
@@ -43,9 +42,9 @@ def object_basket(id_user, *args):
     else:
         Basket.add_flower_basket(id_user, *args)
 
-
+# Основная функция корзины.
 def basket(request):
-
+    # Формирование представления предварительной формы заказа в Корзине.
     if request.method == "GET":
         user_id = request.user.id
         if user_id in dict_object_basket:
@@ -56,7 +55,7 @@ def basket(request):
         else:
             return render(request, 'basket/basket.html', {'title': 'Корзина покупок', 'args': 0,})
 
-
+    # Формирование заказа в Корзине.
     if request.method == "POST":
         user_id = request.user.id
         dict_data = request.POST.dict()
@@ -65,12 +64,14 @@ def basket(request):
             if key not in ['id_user', 'cost', 'address', 'csrfmiddlewaretoken', 'recalculation', 'product']:
                 if dict_data[key]!=0:
                     dict_order[key] = int(dict_data[key])
+        # Проверка изменений внесенных  покупателем в Корзине относительно первоначального содержания.
         if dict_object_basket[user_id].args != dict_order:
             dict_object_basket[user_id].args=dict_order
             dict_object_basket_form[user_id] = FormBasket(preparation_form(dict_order, user_id))
-
+            # Если изменения в Корзине были возврат представления Корзины с изменениями и пересчетом цены покупки.
             return render(request, 'basket/basket.html',
                           {'title': 'Корзина покупок', 'form': dict_object_basket_form[user_id], 'args':len(dict_object_basket[user_id].args), })
+        # Если изменения в Корзине не было запись заказа в базу данных.
         else:
             dict_object_basket_form[user_id].data=request.POST
             dict_object_basket_form[user_id].is_bound = True
@@ -84,6 +85,7 @@ def basket(request):
                 w2 = BasketModel(id_users=int(data.get('id_user')), dict_order=dict_order, cost=float(data.get('cost')),
                              address=data.get('address'))
                 w2.save()
+                # Корректировка колличества товара на складе после совершения покупки.
                 for key in dict_order_final:
                     w3 = Flower.objects.get(pk=int(key))
                     value_before = dict_object_basket[user_id].args[key]
@@ -106,7 +108,7 @@ def basket(request):
                                                                   ' повторить заказ ','string':string,'form': form,})
 
 
-
+# Функция подготовки формы заказа изменяемой динамически.
 def preparation_form(dict_data, user_id):
     dict_all = {}
     dict_cost = {}
