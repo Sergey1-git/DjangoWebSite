@@ -1,5 +1,5 @@
 from datetime import datetime
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from .forms import AddProductForm
 from .models import Flower
@@ -19,6 +19,8 @@ def index(request):
 
 # Функция  добавления в базу данных товара.
 def add_product(request):
+    if not request.user.is_superuser:
+        return HttpResponseForbidden("Вы не имеете доступа к этой странице")
     if request.method == "POST":
         form = AddProductForm(request.POST, request.FILES)
         if form.is_valid():
