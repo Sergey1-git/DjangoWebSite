@@ -13,3 +13,13 @@ class Flower(models.Model):
     time_create = models.DateTimeField(auto_now_add=True)
     time_update = models.DateTimeField(auto_now=True)
     is_published = models.BooleanField(default=True)
+
+
+class ContactModel(models.Model):
+
+    objects = models.Manager()
+    first_name = models.CharField(max_length=30)
+    last_name = models.CharField(max_length=30)
+    email = models.EmailField()
+    content = models.TextField(max_length=255)
+    time_create = models.DateTimeField(auto_now_add=True)

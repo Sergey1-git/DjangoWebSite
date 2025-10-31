@@ -3,7 +3,7 @@ from datetime import datetime
 from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
-from .forms import AddProductForm
+from .forms import AddProductForm, ContactForm
 from .models import Flower
 from basket.views import object_basket
 
@@ -86,8 +86,18 @@ def show_post(request, id):
 
 # Функция  представления контактов магазина.
 def contact(request):
-    date = {'title': 'Обратная связь', 'menu': menu, }
-    return render(request, 'flower/contact.html', context=date)
+    if request.method == "POST":
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            print('Valid contact')
+            form.save()
+            string = "Ваше сообщение получено"
+    else:
+        print('NO Valid contact')
+        form = ContactForm()
+        string = ""
+    return render(request, 'flower/contact.html',
+                  {'title': 'Обратная связь', 'menu': menu, 'form': form, 'string': string, })
 
 
 # Функция  изменения колличеста товара в базе данных при нажатии кнопки купить,
