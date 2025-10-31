@@ -16,4 +16,12 @@
     {% endif %}
     {% endfor %}
 </div>
+<nav class="pagination">
+        <ul >
+            {% for p in list_page %}
+                <a href="?page={{ p }}" style="color:red">{{ p }}</a>
+            {% endfor %}
+        </ul>
+</nav>
+
 {% endblock %}

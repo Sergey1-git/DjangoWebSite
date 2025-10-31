@@ -96,3 +96,8 @@ li {
   list-style-type: none;
 }
 
+.pagination {
+ gap: 15px;         /* Добавить отступ между элементами */
+ color: red;
+ text-align: center;
+}

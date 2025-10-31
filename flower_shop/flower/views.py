@@ -1,4 +1,6 @@
 from datetime import datetime
+
+from django.core.paginator import Paginator
 from django.http import HttpResponse, HttpResponseRedirect, HttpResponseForbidden
 from django.shortcuts import render, get_object_or_404
 from .forms import AddProductForm
@@ -34,6 +36,10 @@ def add_product(request):
 # Функция  представления каталога комнатные цветы.
 def homemade_flowers(request):
     data_dbh = Flower.objects.filter(plant_type='home')
+    paginator = Paginator(data_dbh, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    list_page = page_obj.paginator.page_range
     if request.method == "POST":
         dict=request.POST.dict()
         if 'buy' in dict:
@@ -43,11 +49,15 @@ def homemade_flowers(request):
                 id = request.user.id
                 buy_flower(request, id, dict['id'], dict['buy'])
     return render(request, 'flower/homemade_flowers.html',
-                      {'title': 'Домашние цветы', 'menu': menu, 'posts': data_dbh, })
+                      {'title': 'Домашние цветы', 'menu': menu, 'posts': page_obj,'list_page': list_page, })
 
 # Функция  представления каталога садовые цветы.
 def garden_flowers(request):
     data_dbh = Flower.objects.filter(plant_type='garden')
+    paginator = Paginator(data_dbh, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    list_page = page_obj.paginator.page_range
     if request.method == "POST":
         dict=request.POST.dict()
         if 'buy' in dict:
@@ -57,7 +67,7 @@ def garden_flowers(request):
                 id = request.user.id
                 buy_flower(request, id, dict['id'], dict['buy'])
     return render(request, 'flower/garden_flowers.html',
-                      {'title': 'Садовые цветы', 'menu': menu, 'posts': data_dbh, })
+                      {'title': 'Садовые цветы', 'menu': menu, 'posts': page_obj, 'list_page': list_page, })
 
 
 # Функция  представления товара на его персональной странице.
