@@ -3,16 +3,22 @@
 {% block content %}
 <h1>Корзина покупок</h1>
 {{string}}
+{% if args > 0 %}
 <form action="" method="post" >
     {% csrf_token %}
-    {{ form.as_p }}
-    {% if args > 0 %}
+    {% for f in form %}
+     {% if f.id_for_label != 'id_id_user' %}
+           <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}</p>
+    {% else %}
+          {{ f }}
+    {% endif %}
+    {% endfor %}
         <p>Если вносились изменения в поля колличества приобретаемого товара нажмите кнопку 'Внести изменения в заказ'</p>
         <button type="submit" name="recalculation" >Внести изменения в заказ</button>
         <p>Если в заказ не вносились изменения  нажмите кнопку 'Подтвердить заказ'</p>
         <button type="submit" name="product">Подтвердить заказ</button>
-    {% endif %}
 </form>
+{% endif %}
 {% if args == 0 %}
          <p>Ваша корзина пуста</p>
 {% endif %}

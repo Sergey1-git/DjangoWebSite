@@ -14,7 +14,7 @@ class Basket:
         self.id_object=id
         self.args={}
 
-    # Функция добавления в  Корзины покупателя товара.
+    # Функция добавления в Корзинe покупателя товара.
     def add_flower_basket(id, *args):
         if len(args)==2:
             if args[0] not in dict_object_basket[id].args:
@@ -28,9 +28,8 @@ class Basket:
         del dict_object_basket_form[id]
 
 
-# Функция создания Корзины покупателя при певом нажатии кнопки купить.
+# Функция создания Корзины покупателя при первом нажатии кнопки купить.
 def object_basket(id_user, *args):
-    print('вход object_basket', id_user, *args)
     flag = True
     if len(dict_object_basket)>0:
         for  key in dict_object_basket:
@@ -60,17 +59,24 @@ def basket(request):
         user_id = request.user.id
         dict_data = request.POST.dict()
         dict_order = {}
+        dict_order_0 = {}
         for key in dict_data:
             if key not in ['id_user', 'cost', 'address', 'csrfmiddlewaretoken', 'recalculation', 'product']:
-                if dict_data[key]!=0:
+                dict_order_0[key] = int(dict_data[key])
+                if dict_data[key]!='0':
                     dict_order[key] = int(dict_data[key])
         # Проверка изменений внесенных  покупателем в Корзине относительно первоначального содержания.
-        if dict_object_basket[user_id].args != dict_order:
-            dict_object_basket[user_id].args=dict_order
-            dict_object_basket_form[user_id] = FormBasket(preparation_form(dict_order, user_id))
-            # Если изменения в Корзине были возврат представления Корзины с изменениями и пересчетом цены покупки.
-            return render(request, 'basket/basket.html',
-                          {'title': 'Корзина покупок', 'form': dict_object_basket_form[user_id], 'args':len(dict_object_basket[user_id].args), })
+        if 'recalculation' in dict_data:
+            correct_db(user_id, dict_order_0)
+            if len(dict_order) != 0:
+                dict_object_basket[user_id].args = dict_order
+                dict_object_basket_form[user_id] = FormBasket(preparation_form(dict_order, user_id))
+                return render(request, 'basket/basket.html',{'title': 'Корзина покупок',
+                            'form': dict_object_basket_form[user_id],'args': len(dict_object_basket[user_id].args), })
+            else:
+                Basket.delete_basket_and_form(user_id)
+                return render(request, 'basket/basket.html',{'title': 'Корзина покупок','args': 0,})
+
         # Если изменения в Корзине не было запись заказа в базу данных.
         else:
             dict_object_basket_form[user_id].data=request.POST
@@ -85,18 +91,6 @@ def basket(request):
                 w2 = BasketModel(id_users=int(data.get('id_user')), dict_order=dict_order, cost=float(data.get('cost')),
                              address=data.get('address'))
                 w2.save()
-                # Корректировка колличества товара на складе после совершения покупки.
-                for key in dict_order_final:
-                    w3 = Flower.objects.get(pk=int(key))
-                    value_before = dict_object_basket[user_id].args[key]
-                    if dict_order_final[key] == value_before:
-                        w3.quantity = w3.quantity
-                    elif dict_order_final[key] > value_before:
-                        w3.quantity -= dict_order_final[key] - value_before
-                        w3.save()
-                    else:
-                        w3.quantity += value_before - dict_order_final[key]
-                        w3.save()
                 Basket.delete_basket_and_form(user_id)
                 string = 'Заказ успешно создан'
                 return render(request, 'basket/basket.html', {'title': 'Заказ успешно создан', 'string':string, })
@@ -127,3 +121,18 @@ def preparation_form(dict_data, user_id):
     dict_all['address'] = forms.CharField(max_length=255, label='Адрес доставки')
     dict_all['id_user'] = forms.CharField(widget=forms.HiddenInput(), initial=user_id)
     return dict_all
+
+
+ # Корректировка колличества товара на складе после изменений в заказе.
+def correct_db(user_id, dict_order_recalc):
+    for key in dict_order_recalc:
+        w3 = Flower.objects.get(pk=int(key))
+        value_before = dict_object_basket[user_id].args[key]
+        if dict_order_recalc[key] == value_before:
+            w3.quantity = w3.quantity
+        elif dict_order_recalc[key] > value_before:
+            w3.quantity -= dict_order_recalc[key] - value_before
+            w3.save()
+        else:
+            w3.quantity += value_before - dict_order_recalc[key]
+            w3.save()

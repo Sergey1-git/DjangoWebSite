@@ -36,10 +36,6 @@ def add_product(request):
 # Функция  представления каталога комнатные цветы.
 def homemade_flowers(request):
     data_dbh = Flower.objects.filter(plant_type='home')
-    paginator = Paginator(data_dbh, 8)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    list_page = page_obj.paginator.page_range
     if request.method == "POST":
         dict=request.POST.dict()
         if 'buy' in dict:
@@ -48,16 +44,17 @@ def homemade_flowers(request):
             else:
                 id = request.user.id
                 buy_flower(request, id, dict['id'], dict['buy'])
+    paginator = Paginator(data_dbh, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    list_page = page_obj.paginator.page_range
     return render(request, 'flower/homemade_flowers.html',
                       {'title': 'Домашние цветы', 'menu': menu, 'posts': page_obj,'list_page': list_page, })
 
 # Функция  представления каталога садовые цветы.
 def garden_flowers(request):
     data_dbh = Flower.objects.filter(plant_type='garden')
-    paginator = Paginator(data_dbh, 8)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-    list_page = page_obj.paginator.page_range
+
     if request.method == "POST":
         dict=request.POST.dict()
         if 'buy' in dict:
@@ -66,6 +63,10 @@ def garden_flowers(request):
             else:
                 id = request.user.id
                 buy_flower(request, id, dict['id'], dict['buy'])
+    paginator = Paginator(data_dbh, 8)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    list_page = page_obj.paginator.page_range
     return render(request, 'flower/garden_flowers.html',
                       {'title': 'Садовые цветы', 'menu': menu, 'posts': page_obj, 'list_page': list_page, })
 
