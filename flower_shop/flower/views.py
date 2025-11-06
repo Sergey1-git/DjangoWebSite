@@ -8,14 +8,19 @@ from .models import Flower
 from basket.views import object_basket
 
 
-menu = [{'title': "Главная страница", 'url_name': 'home'},
-        {'title': "Добавить товар", 'url_name': 'add_product'},
-        {'title': "Контакты", 'url_name': 'contact'},]
+def menu(request):
+    if not request.user.is_superuser:
+        return  [{'title': "Главная страница", 'url_name': 'home'},
+                {'title': "Контакты", 'url_name': 'contact'},]
+    else:
+        return [{'title': "Главная страница", 'url_name': 'home'},
+                {'title': "Добавить товар", 'url_name': 'add_product'},
+                {'title': "Контакты", 'url_name': 'contact'}, ]
 
 
 # Функция  представления главной страницы.
 def index(request):
-    date = {'title': 'Главная страница','menu': menu,'posts': 'db.sqlite3',}
+    date = {'title': 'Главная страница','posts': 'db.sqlite3',}
     return render(request, 'flower/index.html', context=date)
 
 
@@ -28,9 +33,9 @@ def add_product(request):
         if form.is_valid():
             form.save()
         else:
-            return render(request, 'flower/product.html', {'title': 'Добавление товара', 'menu': menu, 'form': form, })
+            return render(request, 'flower/product.html', {'title': 'Добавление товара', 'form': form, })
     form = AddProductForm()
-    return render(request, 'flower/product.html',{'title': 'Добавление товара','menu': menu,'form': form,})
+    return render(request, 'flower/product.html',{'title': 'Добавление товара','form': form,})
 
 
 # Функция  представления каталога комнатные цветы.
@@ -49,7 +54,7 @@ def homemade_flowers(request):
     page_obj = paginator.get_page(page_number)
     list_page = page_obj.paginator.page_range
     return render(request, 'flower/homemade_flowers.html',
-                      {'title': 'Домашние цветы', 'menu': menu, 'posts': page_obj,'list_page': list_page, })
+                      {'title': 'Домашние цветы', 'posts': page_obj,'list_page': list_page, })
 
 # Функция  представления каталога садовые цветы.
 def garden_flowers(request):
@@ -68,7 +73,7 @@ def garden_flowers(request):
     page_obj = paginator.get_page(page_number)
     list_page = page_obj.paginator.page_range
     return render(request, 'flower/garden_flowers.html',
-                      {'title': 'Садовые цветы', 'menu': menu, 'posts': page_obj, 'list_page': list_page, })
+                      {'title': 'Садовые цветы', 'posts': page_obj, 'list_page': list_page, })
 
 
 # Функция  представления товара на его персональной странице.
@@ -80,9 +85,7 @@ def show_post(request, id):
             buy_flower(request, id_user, dict['id'], dict['buy'])
     post = get_object_or_404(Flower, pk=id)
     data = {
-        'title': post.title,
-        'menu': menu,
-        'post': post,}
+        'title': post.title, 'post': post,}
     return render(request, 'flower/post.html', context=data)
 
 # Функция  представления контактов магазина.
@@ -98,7 +101,7 @@ def contact(request):
         form = ContactForm()
         string = ""
     return render(request, 'flower/contact.html',
-                  {'title': 'Обратная связь', 'menu': menu, 'form': form, 'string': string, })
+                  {'title': 'Обратная связь', 'form': form, 'string': string, })
 
 
 # Функция  изменения колличеста товара в базе данных при нажатии кнопки купить,
