@@ -13,7 +13,6 @@ class Basket:
     def __init__(self, id):
         self.id_object=id
         self.args={}
-        self.address = ''
 
     # Функция добавления в Корзинe покупателя товара.
     def add_flower_basket(id, *args):
@@ -44,7 +43,6 @@ def object_basket(id_user, *args):
 
 # Основная функция корзины.
 def basket(request):
-    fields_not = ['id_cost', 'id_address', 'id_id_user']
     # Формирование представления предварительной формы заказа в Корзине.
     if request.method == "GET":
         user_id = request.user.id
@@ -52,8 +50,7 @@ def basket(request):
             dict_data = dict_object_basket[user_id].args
             dict_object_basket_form[user_id] = FormBasket(preparation_form(dict_data, user_id))
             return render(request, 'basket/basket.html', {'title': 'Корзина покупок',
-                             'form': dict_object_basket_form[user_id],'args': len(dict_object_basket[user_id].args),
-                                                          'fields_not':fields_not,})
+                             'form': dict_object_basket_form[user_id],'args': len(dict_object_basket[user_id].args),})
         else:
             return render(request, 'basket/basket.html', {'title': 'Корзина покупок', 'args': 0,})
 
@@ -61,24 +58,21 @@ def basket(request):
     if request.method == "POST":
         user_id = request.user.id
         dict_data = request.POST.dict()
-        dict_object_basket[user_id].address = dict_data['address']
         dict_order = {}
         dict_order_0 = {}
         for key in dict_data:
             if key not in ['id_user', 'cost', 'address', 'csrfmiddlewaretoken', 'recalculation', 'product']:
-                if 'string' not in key:
-                    dict_order_0[key] = int(dict_data[key])
-                    if dict_data[key]!='0':
-                        dict_order[key] = int(dict_data[key])
+                dict_order_0[key] = int(dict_data[key])
+                if dict_data[key]!='0':
+                    dict_order[key] = int(dict_data[key])
         # Проверка изменений внесенных  покупателем в Корзине относительно первоначального содержания.
-        if dict_object_basket[user_id].args!=dict_order_0:
+        if 'recalculation' in dict_data:
             correct_db(user_id, dict_order_0)
             if len(dict_order) != 0:
                 dict_object_basket[user_id].args = dict_order
                 dict_object_basket_form[user_id] = FormBasket(preparation_form(dict_order, user_id))
                 return render(request, 'basket/basket.html',{'title': 'Корзина покупок',
-                            'form': dict_object_basket_form[user_id],'args': len(dict_object_basket[user_id].args),
-                                                             'fields_not':fields_not, })
+                            'form': dict_object_basket_form[user_id],'args': len(dict_object_basket[user_id].args), })
             else:
                 Basket.delete_basket_and_form(user_id)
                 return render(request, 'basket/basket.html',{'title': 'Корзина покупок','args': 0,})
@@ -93,15 +87,13 @@ def basket(request):
                 dict_order_final = {}
                 for key in data:
                     if key not in ['id_user', 'cost', 'address', 'csrfmiddlewaretoken', 'recalculation', 'product']:
-                        if 'string' not in key:
-                            dict_order_final[key] = int(data[key])
+                        dict_order_final[key] = int(data[key])
                 w2 = BasketModel(id_users=int(data.get('id_user')), dict_order=dict_order, cost=float(data.get('cost')),
                              address=data.get('address'))
                 w2.save()
                 Basket.delete_basket_and_form(user_id)
-                string=f'Ваш заказ № {w2.pk} успешно оформлен.'
-                return render(request, 'basket/basket.html', {'title': 'Заказ успешно создан',
-                                                              'string':string, })
+                string = 'Заказ успешно создан'
+                return render(request, 'basket/basket.html', {'title': 'Заказ успешно создан', 'string':string, })
             else:
                 print('NO Valid')
                 form = dict_object_basket_form[user_id]
@@ -120,16 +112,13 @@ def preparation_form(dict_data, user_id):
         string = str(w1.id)
         dict_all[string] = forms.IntegerField(min_value=0,
                                               max_value=w1.quantity + initial, initial=initial, label=w1.title)
-        string1 = 'string1' + str(w1.id)
-        dict_all[string1] = forms.CharField(widget=forms.HiddenInput(), initial=w1.price)
         dict_cost[w1.id] = w1.price * dict_object_basket[user_id].args[key]
     cost_order = 0
     for key in dict_cost:
         cost_order += dict_cost[key]
     dict_all['cost'] = forms.IntegerField(label='Общая стоимость заказа', initial=cost_order,
                                           widget=forms.TextInput(attrs={'readonly': 'readonly'}))
-    dict_all['address'] = forms.CharField(max_length=255, label='Адрес доставки',
-                                          initial=dict_object_basket[user_id].address)
+    dict_all['address'] = forms.CharField(max_length=255, label='Адрес доставки')
     dict_all['id_user'] = forms.CharField(widget=forms.HiddenInput(), initial=user_id)
     return dict_all
 
