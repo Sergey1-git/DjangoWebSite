@@ -4,21 +4,51 @@
 <h1>Корзина покупок</h1>
 {{string}}
 {% if args > 0 %}
-<form action="" method="post" >
+<form action="" name="formbasket" method="post" >
     {% csrf_token %}
     {% for f in form %}
-     {% if f.id_for_label != 'id_id_user' %}
-           <p><label class="form-label" for="{{ f.id_for_label }}">{{ f.label }}</label>{{ f }}</p>
+    {% if f.id_for_label not in fields_not %}
+        {% if 'id_string1' in f.id_for_label %}
+            <p class="number-field">{{ f }}</p>
+        {% else %}
+            <p class="number-field">{{ f.label }}{{ f }}</p>
+           {% endif %}
     {% else %}
-          {{ f }}
+             {% if f.id_for_label == 'id_id_user' %}
+                <p>{{ f }}</p>
+             {% endif %}
+             {% if f.id_for_label == 'id_cost' %}
+                <p>{{ f.label }}{{ f }}</p>
+             {% endif %}
+             {% if f.id_for_label == 'id_address' %}
+                <p>{{ f.label }}{{ f }}</p>
+             {% endif %}
     {% endif %}
-    {% endfor %}
+{% endfor %}
         <p>Если вносились изменения в поля колличества приобретаемого товара нажмите кнопку 'Внести изменения в заказ'</p>
         <button type="submit" name="recalculation" >Внести изменения в заказ</button>
         <p>Если в заказ не вносились изменения  нажмите кнопку 'Подтвердить заказ'</p>
         <button type="submit" name="product">Подтвердить заказ</button>
 </form>
 {% endif %}
+<script>
+    const cost = document.getElementById("id_cost");
+    const contacts = document.getElementsByClassName("number-field");
+    for (contact of contacts) {
+       contact.addEventListener('input', calculateSum)}
+    const form = document.formbasket;
+
+    function calculateSum() {
+    let sum=0;
+    let sum_pos=0;
+
+    for(let i = 0; i<contacts.length/2; i++){
+        x=parseFloat(form.elements[1+i*2].value);
+        y=parseFloat(form.elements[2+i*2].value);
+        sum_pos=x*y;
+        sum+=sum_pos;
+    cost.value=sum;}}
+</script>
 {% if args == 0 %}
          <p>Ваша корзина пуста</p>
 {% endif %}
