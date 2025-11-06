@@ -142,8 +142,11 @@ def correct_db(user_id, dict_order_recalc):
         if dict_order_recalc[key] == value_before:
             w3.quantity = w3.quantity
         elif dict_order_recalc[key] > value_before:
-            w3.quantity -= dict_order_recalc[key] - value_before
-            w3.save()
+            if w3.quantity >= dict_order_recalc[key] - value_before:
+                w3.quantity -= dict_order_recalc[key] - value_before
+                w3.save()
+            else:
+                w3.quantity -= w3.quantity
         else:
             w3.quantity += value_before - dict_order_recalc[key]
             w3.save()
