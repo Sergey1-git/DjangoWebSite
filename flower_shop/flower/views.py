@@ -81,8 +81,11 @@ def show_post(request, id):
     if request.method == "POST":
         dict = request.POST.dict()
         if 'buy' in dict:
-            id_user = request.user.id
-            buy_flower(request, id_user, dict['id'], dict['buy'])
+            if request.user.is_authenticated is False:
+                return HttpResponseRedirect("/users/register/")
+            else:
+                id_user = request.user.id
+                buy_flower(request, id_user, dict['id'], dict['buy'])
     post = get_object_or_404(Flower, pk=id)
     data = {
         'title': post.title, 'post': post,}

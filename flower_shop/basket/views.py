@@ -126,8 +126,8 @@ def preparation_form(dict_data, user_id):
     cost_order = 0
     for key in dict_cost:
         cost_order += dict_cost[key]
-    dict_all['cost'] = forms.IntegerField(label='Общая стоимость заказа', initial=cost_order,
-                                          widget=forms.TextInput(attrs={'readonly': 'readonly'}))
+    dict_all['cost'] = forms.DecimalField(label='Общая стоимость заказа', initial=float(cost_order),
+                                          widget=forms.NumberInput(attrs={'readonly': 'readonly'}))
     dict_all['address'] = forms.CharField(max_length=255, label='Адрес доставки',
                                           initial=dict_object_basket[user_id].address)
     dict_all['id_user'] = forms.CharField(widget=forms.HiddenInput(), initial=user_id)
