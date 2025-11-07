@@ -1,0 +1,42 @@
+{% load static %}
+
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+<link type="text/css" href="{% static 'flower/css/styles.css' %}" rel="stylesheet" />
+</head>
+<body>
+    <div class="header">
+             <div class="header_text">  Купите цветы </div>
+    </div>
+    <div class="menu">
+
+                 {% for m in mainmenu %}
+                      <div class="menu_text"><a href="{% url m.url_name %}" style="color:yellow" >{{m.title}}</a></div>
+                 {% endfor %}
+                 <div class="menu_text"><a href="{% url 'basket:basket' %}" style="color:yellow">Корзина</a></div>
+                 {% if user.is_authenticated %}
+                     <div class="menu_text"> {{user.username}} | <a href="{% url 'users:logout' %}
+                                             "style="color:yellow">Выйти</a></div>
+                 {% else %}
+                     <div class="menu_text"><a href="{% url 'users:login' %}" style="color:yellow">Войти</a> |
+                         <a href="{% url 'users:register' %} "style="color:yellow">Регистрация</a></div>
+                 {% endif %}
+    </div>
+    <div id="main">
+        <div id="main1">
+            <p style="color: green; font-size: 30px;">Каталоги цветов.</p>
+            <ol>
+                <li><a href="{% url 'homemade_flowers' %}" style="color:green">Домашние цветы.</a></li>
+                <li><a href="{% url 'garden_flowers' %}" style="color:green">Садовые цветы.</a></li>
+            </ol>
+        </div>
+        <div id="main3">{% block content %} {% endblock %}</div>
+        <div id="main2">Здесь будет дополнительный функционал</div>
+    </div>
+    <div class="footer">
+     <p>© 2025. flower_shop.rу</p>
+    </div>
+</body>
+</html>
